@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { createStore } from "redux";
 
@@ -18,7 +19,7 @@ const IMAGES = [
   .flatMap((image) => [`a|${image}`, `b|${image}`])
   .sort(() => Math.random() - 0.5);
 
-export default function App() {
+export default function Memotest() {
   const [guessed, setGuessed] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -26,6 +27,8 @@ export default function App() {
     switch (action.type) {
       case "@counter/incremented":
         return state + 1;
+      default:
+        return state;
     }
   };
 
@@ -35,8 +38,9 @@ export default function App() {
     type: "@counter/incremented",
   };
 
-  store.dispatch(increment);
-  console.log(store.getState());
+  store.subscribe(() => {
+    console.log(store.getState());
+  });
 
   useEffect(() => {
     if (selected.length == 2) {
@@ -54,46 +58,50 @@ export default function App() {
   }, [guessed]);
 
   return (
-    <ul
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
-        gap: 7,
-        border: "1px solid white",
-        minWidth: "600px",
-        margin: "auto",
-      }}
-    >
-      {IMAGES.map((image) => {
-        const [, url] = image.split("|");
-        return (
-          <li
-            onClick={() =>
-              selected.length < 2 &&
-              setSelected((selected) => selected.concat(image))
-            }
-            key={image}
-            style={{
-              padding: 12,
-              border: "1px solid #666",
-              borderRadius: 12,
-              cursor: "pointer",
-            }}
-          >
-            {selected.includes(image) || guessed.includes(image) ? (
-              <img src={url} alt="icon" />
-            ) : (
-              <img
-                key={url}
-                src={
-                  "https://icongr.am/clarity/eye.svg?size=100&color=currentColor"
-                }
-                alt="icon"
-              />
-            )}
-          </li>
-        );
-      })}
-    </ul>
+    <div className="memo-container" style={{}} id="mainmemo">
+      <button onClick={() => store.dispatch(increment)}>Plus</button>
+      {}
+      <ul
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+          gap: 7,
+          border: "1px solid white",
+          minWidth: "600px",
+          margin: "auto",
+        }}
+      >
+        {IMAGES.map((image) => {
+          const [, url] = image.split("|");
+          return (
+            <li
+              onClick={() =>
+                selected.length < 2 &&
+                setSelected((selected) => selected.concat(image))
+              }
+              key={image}
+              style={{
+                padding: 12,
+                border: "1px solid #666",
+                borderRadius: 12,
+                cursor: "pointer",
+              }}
+            >
+              {selected.includes(image) || guessed.includes(image) ? (
+                <img src={url} alt="icon" />
+              ) : (
+                <img
+                  key={url}
+                  src={
+                    "https://icongr.am/clarity/eye.svg?size=100&color=currentColor"
+                  }
+                  alt="icon"
+                />
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
