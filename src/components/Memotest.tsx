@@ -1,6 +1,5 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { createStore } from "redux";
 
 const IMAGES = [
   "https://icongr.am/devicon/angularjs-original.svg?size=100&color=currentColor",
@@ -23,25 +22,6 @@ export default function Memotest() {
   const [guessed, setGuessed] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const counterReducer = (state = 0, action) => {
-    switch (action.type) {
-      case "@counter/incremented":
-        return state + 1;
-      default:
-        return state;
-    }
-  };
-
-  const store = createStore(counterReducer);
-
-  const increment = {
-    type: "@counter/incremented",
-  };
-
-  store.subscribe(() => {
-    console.log(store.getState());
-  });
-
   useEffect(() => {
     if (selected.length == 2) {
       if (selected[0].split("|")[1] == selected[1].split("|")[1]) {
@@ -59,8 +39,6 @@ export default function Memotest() {
 
   return (
     <div className="memo-container" style={{}} id="mainmemo">
-      <button onClick={() => store.dispatch(increment)}>Plus</button>
-      {}
       <ul
         style={{
           display: "grid",
