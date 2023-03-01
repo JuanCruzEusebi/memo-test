@@ -1,5 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import Score from "../components/Score";
+import Leaderboard from "./Leaderboard";
 
 const IMAGES = [
   "https://icongr.am/devicon/angularjs-original.svg?size=100&color=currentColor",
@@ -9,11 +11,11 @@ const IMAGES = [
   "https://icongr.am/devicon/c-original.svg?size=100&color=currentColor",
   "https://icongr.am/devicon/ie10-original.svg?size=100&color=currentColor",
   "https://icongr.am/devicon/javascript-original.svg?size=100&color=currentColor",
-  "https://icongr.am/devicon/typescript-original.svg?size=100&color=currentColor",
-  "https://icongr.am/devicon/python-original.svg?size=100&color=currentColor",
-  "https://icongr.am/devicon/docker-original.svg?size=100&color=currentColor",
-  "https://icongr.am/devicon/css3-original.svg?size=100&color=currentColor",
-  "https://icongr.am/devicon/git-original.svg?size=100&color=currentColor",
+  // "https://icongr.am/devicon/typescript-original.svg?size=100&color=currentColor",
+  // "https://icongr.am/devicon/python-original.svg?size=100&color=currentColor",
+  // "https://icongr.am/devicon/docker-original.svg?size=100&color=currentColor",
+  // "https://icongr.am/devicon/css3-original.svg?size=100&color=currentColor",
+  // "https://icongr.am/devicon/git-original.svg?size=100&color=currentColor",
 ]
   .flatMap((image) => [`a|${image}`, `b|${image}`])
   .sort(() => Math.random() - 0.5);
@@ -21,11 +23,24 @@ const IMAGES = [
 export default function Memotest() {
   const [guessed, setGuessed] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
+  const [counter, setCounter] = useState(0);
+
+  function addToScore() {
+    return setCounter(counter + 1);
+  }
+  useEffect(() => {
+    const id = setInterval(() => setCounter((oldCount) => oldCount + 1), 1000);
+
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
 
   useEffect(() => {
     if (selected.length == 2) {
       if (selected[0].split("|")[1] == selected[1].split("|")[1]) {
         setGuessed((guessed) => guessed.concat(selected));
+        setCounter(counter - 10);
       }
       setTimeout(() => setSelected([]), 1000);
     }
@@ -38,13 +53,13 @@ export default function Memotest() {
   }, [guessed]);
 
   return (
-    <div className="memo-container" style={{}} id="mainmemo">
+    <div className="memo-container" onClick={addToScore}>
+      <Score score={counter} />
       <ul
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
           gap: 7,
-          border: "1px solid white",
           minWidth: "600px",
           margin: "auto",
         }}
@@ -60,7 +75,7 @@ export default function Memotest() {
               key={image}
               style={{
                 padding: 12,
-                border: "1px solid #666",
+                border: "1px solid #888",
                 borderRadius: 12,
                 cursor: "pointer",
               }}
@@ -80,6 +95,7 @@ export default function Memotest() {
           );
         })}
       </ul>
+      <Leaderboard />
     </div>
   );
 }
